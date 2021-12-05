@@ -1,18 +1,18 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: mongoexpress-deployment
+  name: mongo-express-deployment
 spec:
   selector:
     matchLabels:
-      app: mongoexpress
+      app: mongo-express
   template:
     metadata:
       labels:
-        app: mongoexpress
+        app: mongo-express
     spec:
       containers:
-        - name: mongoexpress
+        - name: mongo-express
           image: mongo-express
           # resources:
           #   limits:
@@ -37,3 +37,18 @@ spec:
                 configMapKeyRef:
                   name: mongodb-configmap
                   key: database_url
+
+--- # mongo express service
+apiVersion: v1
+kind: Service
+metadata:
+  name: mongo-express-service
+spec:
+  selector:
+    app: mongo-express
+  type: LoadBalancer # by mentioning this, the service allows requests from external IP addresses
+  ports:
+    - port: 8081
+      targetPort: 8081
+      protocol: TCP
+      nodePort: 30000 # port where external IP address will be open; range is 30000-32767
